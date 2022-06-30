@@ -1,4 +1,7 @@
 package mx.tc.j2se.tasks;
+
+import com.sun.xml.internal.txw2.IllegalAnnotationException;
+
 /**
  * this class is for creating a task which could be repetitive or non-repetitive
  *
@@ -24,6 +27,10 @@ public class TaskImpl implements Task {
      * @param time it's the exact time when the task will be executed
      */
     public  TaskImpl(String title, int time){
+        // throwing the exception if time is negative
+        if (time < 0){
+            throw new IllegalAnnotationException("Date cannot be negative");
+        }
         this.title = title;
         this.time = time;
         this.repeated = false;
@@ -37,6 +44,16 @@ public class TaskImpl implements Task {
      * @param interval it's how often the task will execute
      */
     public TaskImpl(String title, int start, int end, int interval){
+        if (start < 0){
+            // Exception if the start time is less than zero
+            throw new IllegalAnnotationException("Start parameter cannot be negative");
+        } else if (interval <= 0) {
+            // Exception if the interval is zero or less
+            throw new IllegalAnnotationException("The interval cannot be zero or negative");
+        } else if (end<=start) {
+            // Exception if the end is greater than start
+            throw new IllegalAnnotationException("The end parameter is greater or equal than the start");
+        }
         this.title = title;
         this.start = start;
         this.end = end;
@@ -96,6 +113,10 @@ public class TaskImpl implements Task {
      * @param time the time when a non-repetitive task will be executed
      */
     public void setTime(int time) {
+        if (time < 0){
+            // Exception if time is negative
+            throw new IllegalAnnotationException("The time cannot be negative");
+        }
         if (this.repeated == false){
             this.time = time;
         }
@@ -152,6 +173,16 @@ public class TaskImpl implements Task {
      * @param interval the interval of time when each repetition is executed
      */
     public void setTime(int start, int end, int interval) {
+        if (start<0){
+            // Exception if start is negative
+            throw new IllegalAnnotationException("The start parameter cannot be set with a negative value");
+        } else if (interval<=0) {
+            // Exception if the interval is zero or negative
+            throw new IllegalAnnotationException("The interval cannot be set in zero or a negative value");
+        } else if (end>=start) {
+            // Exception if the end parameter is equal or greater than the start
+            throw new IllegalAnnotationException("The end parameter cannot be greater or equal than start parameter");
+        }
         if (this.repeated == false){
             repeated = true;
             this.start = start;
@@ -179,6 +210,10 @@ public class TaskImpl implements Task {
      * @return the time when the next execution will happen
      */
     public int nextTimeAfter (int current) {
+        if (current<0){
+            // Exception if the current time is negative
+            throw new IllegalAnnotationException("The current time cannot be negative");
+        }
         int a = -1;
         if (this.repeated == true && this.active == true) {
             for (int i = this.start; i <= this.end; i = i + this.interval) {

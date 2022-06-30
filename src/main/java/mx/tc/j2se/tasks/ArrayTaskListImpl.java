@@ -1,5 +1,7 @@
 package mx.tc.j2se.tasks;
 
+import com.sun.xml.internal.txw2.IllegalAnnotationException;
+
 /**
  * This class create a list of arrayTaskList that are implemented, the arrayTaskList can be active or inactive as well as repetitive or
  * non-repetitive, the list will only store arrayTaskList.
@@ -20,6 +22,10 @@ public class ArrayTaskListImpl implements ArrayTaskList {
      * @param task is the task that will be added to the list of arrayTaskList
      */
     public void add(Task task) {
+        if (task == null){
+            // Exception in case the task is null
+            throw new NullPointerException("The task must exist for being added");
+        }
         int tasksArrayLength = this.arrayTaskList.length;
         Task copyTasks[] = new Task[tasksArrayLength + 1];
         if (tasksArrayLength == 0) {
@@ -41,6 +47,10 @@ public class ArrayTaskListImpl implements ArrayTaskList {
      * will return false
      */
     public boolean remove(Task task) {
+        if (task == null){
+            // Exception in case the task is null
+            throw new NullPointerException("The task must exist for being deleted");
+        }
         boolean exist = false;
         int tasksArrayLength = this.arrayTaskList.length;
         Task copyTasksSub[] = new Task[tasksArrayLength - 1];
@@ -77,6 +87,13 @@ public class ArrayTaskListImpl implements ArrayTaskList {
      * @return the data of the task in that index
      */
     public Task getTask(int index) {
+        if (index<0){
+            // Exception for negative index
+            throw new ArrayIndexOutOfBoundsException("The index needs to be positive or zero");
+        } else if (index > this.arrayTaskList.length) {
+            // Exception for index greater that the array's length
+            throw new ArrayIndexOutOfBoundsException("The index exceed the array's length");
+        }
         return this.arrayTaskList[index];
     }
 
@@ -88,6 +105,13 @@ public class ArrayTaskListImpl implements ArrayTaskList {
      * @return return an array with the tasks that are between that time
      */
     public ArrayTaskList incoming(int from, int to) {
+        if (from<0){
+            //Exception in case the 'from' parameter is negative
+            throw new IllegalAnnotationException("The from parameter needs a positive number");
+        } else if (to>from) {
+            //Exception in case 'to' is greater than 'from'
+            throw new IllegalAnnotationException("The to parameter needs to be greater than the from parameter");
+        }
         /*
         int k = 0;
         boolean exist;
