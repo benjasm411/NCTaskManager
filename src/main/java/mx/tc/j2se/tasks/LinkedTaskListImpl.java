@@ -26,6 +26,7 @@ public class LinkedTaskListImpl implements LinkedTaskList{
     }
 
     private Node list;
+    private Node tail;
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * This empty constructor function as class initializer, it doesn't change or add any data into the program
@@ -45,13 +46,11 @@ public class LinkedTaskListImpl implements LinkedTaskList{
         Node taskAdded = new Node(task);
         if (this.list == null){
             this.list = taskAdded;
+            this.tail = this.list;
         } else{
-            taskAdded.nextNode = null;
-            Node previousList = this.list;
-            while (previousList.nextNode != null){
-                previousList = previousList.nextNode;
-            }
-            previousList.nextNode = taskAdded;
+            Node node = new Node(task);
+            this.tail.nextNode = node;
+            this.tail = node;
         }
     }
 
@@ -66,30 +65,31 @@ public class LinkedTaskListImpl implements LinkedTaskList{
             throw new NullPointerException("The task can't be null");
         }
         // Method
-        int count = 0;
-        int taskIndex = count;
-        boolean countBool = false;
+        int index = 0;
+        int count = 1;
         boolean exist = false;
-        Node copyList = this.list;
-        Node previous = copyList;
-        Node current = this.list;
-        while (current != null){
-            count++;
-            Node next = current.nextNode;
-            if (current.task == task && !countBool) {
-                taskIndex = count;
+        Node values = this.list;
+        while (values != null){
+            index++;
+            if (values.task == task){
                 exist = true;
-                countBool = true;
-                previous.nextNode = next;
-            } else {
-                previous = current;
+                break;
             }
-            current = next;
+            values = values.nextNode;
         }
-        if (taskIndex == 1) {
-            this.list = copyList.nextNode;
-        } else {
-            this.list = copyList;
+        if (index == 1){
+            Node current = this.list;
+            this.list = this.list.nextNode;
+            current.nextNode = null;
+        }else {
+            Node current = this.list;
+            Node prev = null;
+            while (count < index){
+                count++;
+                prev = current;
+                current = current.nextNode;
+            }
+            prev.nextNode = current.nextNode;
         }
         return exist;
     }
@@ -143,7 +143,7 @@ public class LinkedTaskListImpl implements LinkedTaskList{
      * @param to is the time when the interval ends
      * @return the linked list of tasks that are between 'from' and 'to'
      */
-    public LinkedTaskList incoming (int from, int to){
+    public LinkedTaskList incoming(int from, int to) {
         // Exceptions
         if (from<0){
             //Exception in case the 'from' parameter is negative
@@ -153,55 +153,44 @@ public class LinkedTaskListImpl implements LinkedTaskList{
             throw new IllegalAnnotationException("The to parameter needs to be greater than the from parameter");
         }
         // Method
-        /*
-        Node copyList = this.list;
-        LinkedTaskList closerTasks = new LinkedTaskListImpl();
-        while (copyList != null){
-            if (copyList.task.isRepeated()){// && this.list.task.isActive()){
-                int j = copyList.task.getEndTime();
-                int k = copyList.task.getRepeatInterval();
-                for (int i = copyList.task.getStartTime(); i <= j; i = k+i){
-                    if (i>from && i<to){
-                        System.out.println(copyList.task.getTitle());
-                        closerTasks.add(copyList.task);
-                        break;
-                    }
-                }
-            } else if (copyList.task.isActive()
-                    && copyList.task.getStartTime() > from
-                    && copyList.task.getStartTime() < to) {
-                System.out.println(copyList.task.getTitle());
-                closerTasks.add(copyList.task);
-            }
-            copyList =  copyList.nextNode;
-        }
-        return closerTasks;
-         */
-
         LinkedTaskList copyList = new LinkedTaskListImpl();
-        LinkedTaskList closerTasks = new LinkedTaskListImpl();
+        LinkedTaskList theList = new LinkedTaskListImpl();
+        Task currentTask;
+        int size;
+        // Copy the list into a new one
         Node cycle = this.list;
         while (cycle != null){
             copyList.add(cycle.task);
             cycle = cycle.nextNode;
         }
-        for (int i = 0; i<copyList.size(); i++){
-            Task currentTask = copyList.getTask(i);
+        size = copyList.size();
+        //Select the task that are active and are in the interval
+        if (size==0){
+            return theList;
+        }
+        for (int h = 0; h<size; h++) {
+            currentTask = copyList.getTask(h);
             if (currentTask.isRepeated() && currentTask.isActive()){
                 int j = currentTask.getEndTime();
                 int k = currentTask.getRepeatInterval();
-                for (int h = currentTask.getStartTime(); h<= j; h= h+k){
-                    if (h>from && h<to){
-                        closerTasks.add(currentTask);
+                for (int i = currentTask.getStartTime();
+                     i <= j; i = k + i){
+                    if (i>from && i<to){
+                        theList.add(currentTask);
+                        System.out.println("This task is repetitive and was added = " + currentTask.getTitle());
                         break;
                     }
                 }
-            } else if (currentTask.isActive()
+            }else {
+                if (currentTask.isActive()
                         && currentTask.getStartTime() > from
                         && currentTask.getStartTime() < to){
-                closerTasks.add(currentTask);
+                    theList.add(currentTask);
+                    System.out.println("This task is not repetitive and was added = " + currentTask.getTitle());
+                }
             }
         }
-        return closerTasks;
+        System.out.println("theList size = " + theList.size());
+        return theList;
     }
 }
