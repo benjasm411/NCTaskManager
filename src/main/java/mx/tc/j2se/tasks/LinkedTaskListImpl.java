@@ -7,7 +7,7 @@ import com.sun.xml.internal.txw2.IllegalAnnotationException;
  * @author Benjamin Sanchez Martinez
  */
 
-public class LinkedTaskListImpl implements LinkedTaskList{
+public class LinkedTaskListImpl extends AbstractTaskList{
     /**
      * This class is used for creating a node that will be part of the list
      */
@@ -143,7 +143,7 @@ public class LinkedTaskListImpl implements LinkedTaskList{
      * @param to is the time when the interval ends
      * @return the linked list of tasks that are between 'from' and 'to'
      */
-    public LinkedTaskList incoming(int from, int to) {
+    public AbstractTaskList incoming(int from, int to) {
         // Exceptions
         if (from<0){
             //Exception in case the 'from' parameter is negative
@@ -153,8 +153,8 @@ public class LinkedTaskListImpl implements LinkedTaskList{
             throw new IllegalAnnotationException("The to parameter needs to be greater than the from parameter");
         }
         // Method
-        LinkedTaskList copyList = new LinkedTaskListImpl();
-        LinkedTaskList theList = new LinkedTaskListImpl();
+        AbstractTaskList copyList = new LinkedTaskListImpl();
+        AbstractTaskList theList = new LinkedTaskListImpl();
         Task currentTask;
         int size;
         // Copy the list into a new one
@@ -177,7 +177,6 @@ public class LinkedTaskListImpl implements LinkedTaskList{
                      i <= j; i = k + i){
                     if (i>from && i<to){
                         theList.add(currentTask);
-                        System.out.println("This task is repetitive and was added = " + currentTask.getTitle());
                         break;
                     }
                 }
@@ -186,11 +185,9 @@ public class LinkedTaskListImpl implements LinkedTaskList{
                         && currentTask.getStartTime() > from
                         && currentTask.getStartTime() < to){
                     theList.add(currentTask);
-                    System.out.println("This task is not repetitive and was added = " + currentTask.getTitle());
                 }
             }
         }
-        System.out.println("theList size = " + theList.size());
         return theList;
     }
 }

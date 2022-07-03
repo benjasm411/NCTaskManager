@@ -7,7 +7,7 @@ import com.sun.xml.internal.txw2.IllegalAnnotationException;
  * non-repetitive, the list will only store arrayTaskList.
  * @author Benjamin Sanchez Martinez
  */
-public class ArrayTaskListImpl implements ArrayTaskList {
+public class ArrayTaskListImpl extends AbstractTaskList {
     private Task arrayTaskList[] = new Task[0];
 
     /**
@@ -104,11 +104,11 @@ public class ArrayTaskListImpl implements ArrayTaskList {
      * @param to   final time of the tasks selection
      * @return return an array with the tasks that are between that time
      */
-    public ArrayTaskList incoming(int from, int to) {
+    public AbstractTaskList incoming(int from, int to) {
         if (from<0){
             //Exception in case the 'from' parameter is negative
             throw new IllegalAnnotationException("The from parameter needs a positive number");
-        } else if (to>from) {
+        } else if (to<from) {
             //Exception in case 'to' is greater than 'from'
             throw new IllegalAnnotationException("The to parameter needs to be greater than the from parameter");
         }
@@ -139,7 +139,7 @@ public class ArrayTaskListImpl implements ArrayTaskList {
             finalTasks[i] = uniqueTasks[i];
         }*/
         // Select the tasks that are active and are between the time interval
-        ArrayTaskList newList = new ArrayTaskListImpl(); // New ArrayTaskList instance is created
+        AbstractTaskList newList = new ArrayTaskListImpl(); // New ArrayTaskList instance is created
         //for (Task currentUniqueTask : finalTasks) {
         for (Task currentUniqueTask : this.arrayTaskList) {
             if (currentUniqueTask.isRepeated() && currentUniqueTask.isActive()){
