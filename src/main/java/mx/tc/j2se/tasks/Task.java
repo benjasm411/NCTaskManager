@@ -1,6 +1,6 @@
 package mx.tc.j2se.tasks;
 
-public interface Task {
+public interface Task extends Cloneable{
     String getTitle();
 
     void setTitle(String var1);
@@ -24,4 +24,9 @@ public interface Task {
     boolean isRepeated();
 
     int nextTimeAfter(int var1);
+    boolean equals(Object o);
+    int hashCode();
+    String toString();
+
+    Task clone() throws CloneNotSupportedException;
 }

@@ -7,7 +7,7 @@ import com.sun.xml.internal.txw2.IllegalAnnotationException;
  *
  * @author Benjamin Sanchez Martinez
  */
-public class TaskImpl implements Task {
+public class TaskImpl implements Task, Cloneable {
     private String title;
     private int time;
     private int start;
@@ -99,7 +99,7 @@ public class TaskImpl implements Task {
      * @return the value of the time when the task is executed for the first time
      */
     public int getTime() {
-        if (this.repeated == false) {
+        if (!this.repeated) {
             return this.time;
         }
         else {
@@ -117,7 +117,7 @@ public class TaskImpl implements Task {
             // Exception if time is negative
             throw new IllegalAnnotationException("The time cannot be negative");
         }
-        if (this.repeated == false){
+        if (!this.repeated){
             this.time = time;
         }
         else {
@@ -131,7 +131,7 @@ public class TaskImpl implements Task {
      * @return the time when the task is executed
      */
     public int getStartTime() {
-        if (this.repeated == false){
+        if (!this.repeated){
             return  this.time;
         }
         else {
@@ -144,7 +144,7 @@ public class TaskImpl implements Task {
      * @return the last time when the task it's executed
      */
     public int getEndTime() {
-        if (this.repeated == true){
+        if (this.repeated){
             return this.end;
         }
         else {
@@ -157,7 +157,7 @@ public class TaskImpl implements Task {
      * @return the execution interval in a repetitive task, if it's a non-repetitive task will return 0
      */
     public int getRepeatInterval() {
-        if (this.repeated == false){
+        if (!this.repeated){
             return 0;
         }
         else {
@@ -183,7 +183,8 @@ public class TaskImpl implements Task {
             // Exception if the end parameter is equal or greater than the start
             throw new IllegalAnnotationException("The end parameter cannot be greater or equal than start parameter");
         }
-        if (this.repeated == false){
+
+        if (!this.repeated){
             repeated = true;
             this.start = start;
             this.end = end;
@@ -215,7 +216,7 @@ public class TaskImpl implements Task {
             throw new IllegalAnnotationException("The current time cannot be negative");
         }
         int a = -1;
-        if (this.repeated == true && this.active == true) {
+        if (this.repeated && this.active) {
             for (int i = this.start; i <= this.end; i = i + this.interval) {
                 if (current < this.start){
                     a = this.start;
@@ -231,7 +232,7 @@ public class TaskImpl implements Task {
                     break;
                 }
             }
-        } else if (this.repeated == false && this.active == true) {
+        } else if (!this.repeated && this.active) {
             if (current < this.time){
                 a = this.time;
             }else {
@@ -239,5 +240,77 @@ public class TaskImpl implements Task {
             }
         }
         return a;
+    }
+
+    /**
+     * This method says if a task is exactly equal to another one
+     * @param o is the task that is going to be compared in the form of an Object
+     * @return a boolean that indicates if the task is equal or not
+     */
+    public boolean equals (Object o){
+        Task task = (Task) o;
+        boolean state = false;
+        if (task == null){
+            throw new NullPointerException("The task is null");
+        } else if (!this.repeated &&
+                   !task.isRepeated() &&
+                   this.title.equals(task.getTitle()) &&
+                   this.time == task.getTime() &&
+                   this.active == task.isActive()) {
+            state = true;
+        } else if (this.repeated &&
+                   task.isRepeated() &&
+                   this.title.equals(task.getTitle()) &&
+                   this.start == task.getStartTime() &&
+                   this.end == task.getEndTime() &&
+                   this.active == task.isActive() &&
+                   this.interval == task.getRepeatInterval()){
+            state = true;
+        }
+        return state;
+    }
+
+    /**
+     * This method finds the hash code of the object
+     * @return the hashCode of the object
+     */
+    public int hashCode (){
+        int hashCode = this.title.hashCode();
+        return hashCode;
+    }
+
+    /**
+     * This method shows the info inside the task
+     * @return the string that shows the Task information
+     */
+    @Override
+    public String toString() {
+        if (isRepeated()){
+            return
+                    "The repetitive task ='" + this.title + " has the following parameters \n" +
+                    "start= " + this.start +
+                    ", end= " + this.end +
+                    ", interval= " + this.interval +
+                    ", active= " + this.active +
+                    ", repeated= " + this.repeated +
+                    '\n';
+        }else {
+            return
+                    "The non-repetitive task='" + this.title + " has the following parameters \n" +
+                    "time= " + this.time +
+                    ", active= " + this.active +
+                    ", repeated= " + this.repeated +
+                    '\n';
+        }
+    }
+
+    /**
+     * This method clones a task
+     * @return the task cloned
+     * @throws CloneNotSupportedException
+     */
+    @Override
+    public Task clone() throws CloneNotSupportedException {
+        return (Task) super.clone();
     }
 }
