@@ -1,9 +1,8 @@
 package mx.tc.j2se.tasks;
 
 import java.util.Iterator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
+import java.util.stream.StreamSupport;
 
 /**
  * This class create a list of arrayTaskList that are implemented, the arrayTaskList can be active or inactive as well as repetitive or
@@ -105,6 +104,19 @@ public class ArrayTaskListImpl extends AbstractTaskList {
     }
 
     /**
+     * This method creates a stream that allows to work with collections, iterating each of them
+     * @return an Stream element
+     */
+    @Override
+    public Stream<Task> getStream(){
+        if (this.size() == 0){
+            throw new IllegalStateException();
+        }else {
+            return StreamSupport.stream(this.spliterator(), false);
+        }
+    }
+
+    /**
      * Method that indicates the tasks that are between a certain time, also the tasks must be active
      *
      * @param from initial time of the tasks selection
@@ -112,6 +124,7 @@ public class ArrayTaskListImpl extends AbstractTaskList {
      * @return return an array with the tasks that are between that time
      */
     public AbstractTaskList incoming(int from, int to) {
+        /*
         if (from < 0) {
             //Exception in case the 'from' parameter is negative
             throw new IllegalAnnotationException("The from parameter needs a positive number");
@@ -147,31 +160,28 @@ public class ArrayTaskListImpl extends AbstractTaskList {
                 }
             }
         }
-        /*
+        */
+
         /////////////////////////////////////////////////////////////////////////////
         // With streams
-        Task [] listForStream = this.arrayTaskList;
         AbstractTaskList newList = new ArrayTaskListImpl();
-        // Stream for non-repetitive tasks
-        Stream.of(listForStream)
-                .filter(task -> task.getStartTime() > from
-                        && task.getStartTime() < to
-                        && !task.isRepeated()
-                        && task.isActive())
-                .forEach(newList::add);
-        // Stream for repetitive tasks
-        Stream.of(listForStream)
-                .filter(task -> task.isRepeated() && task.isActive())
-                .forEach(task -> {
-                    for (int i = task.getStartTime(); i<= task.getEndTime(); i = i + task.getRepeatInterval()){
-                        if (i<to && i> from){
-                            newList.add(task);
-                            break;
-                        }
-                    }
-                });
-
-         */
+        if (this.size() == 0){
+            throw new IllegalStateException();
+        } else {
+            // Stream for non-repetitive tasks
+            this.getStream()
+                    .filter(task -> task.getStartTime() > from
+                            && task.getStartTime() < to
+                            && !task.isRepeated()
+                            && task.isActive())
+                    .forEach(newList::add);
+            // Stream for repetitive tasks
+            this.getStream()
+                    .filter(task -> task.isRepeated()
+                            && task.isActive()
+                            && task.nextTimeAfter(from) < to)
+                    .forEach(newList::add);
+        }
         return newList;
     }
 
@@ -245,14 +255,15 @@ public class ArrayTaskListImpl extends AbstractTaskList {
      */
     /*
     @Override
-    public AbstractTaskList clone() {
+    public ArrayTaskList clone() {
         try {
-            return (AbstractTaskList) super.clone();
+            return (ArrayTaskList) super.clone();
         } catch (CloneNotSupportedException e){
             return null;
         }
     }
-    */
+     */
+
 
     /**
      * This method shows the info inside the array

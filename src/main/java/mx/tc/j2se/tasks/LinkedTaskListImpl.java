@@ -1,9 +1,10 @@
 package mx.tc.j2se.tasks;
 
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
+//import com.sun.xml.internal.txw2.IllegalAnnotationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-//import java.util.stream.Stream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * This Class makes the same as the ArrayTaskListImpl class, but this one uses linked-list as main tool
@@ -43,10 +44,12 @@ public class LinkedTaskListImpl extends AbstractTaskList{
      * @param task is the task that will be added
      */
     public void add (Task task){
+        /*
         // Exceptions
         if (task == null){
             throw new NullPointerException("The task can't be null");
         }
+         */
         // Method
         Node taskAdded = new Node(task);
         if (this.list == null){
@@ -65,10 +68,12 @@ public class LinkedTaskListImpl extends AbstractTaskList{
      * @return a boolean true if the task exist in the list, or false if it doesn't
      */
     public boolean remove (Task task){
+        /*
         // Exceptions
         if (task == null){
             throw new NullPointerException("The task can't be null");
         }
+         */
         // Method
         int index = 0;
         int count = 1;
@@ -123,11 +128,13 @@ public class LinkedTaskListImpl extends AbstractTaskList{
      * @return the task that points to the index
      */
     public Task getTask (int index){
+        /*
         // Exceptions
         if (index<0){
             // Exception for negative index
             throw new ArrayIndexOutOfBoundsException("The index needs to be positive or zero");
         }
+         */
         // Method
         int count = 0;
         Task task = null;
@@ -148,7 +155,8 @@ public class LinkedTaskListImpl extends AbstractTaskList{
      * @param to is the time when the interval ends
      * @return the linked list of tasks that are between 'from' and 'to'
      */
-    public AbstractTaskList incoming(int from, int to) {
+    public AbstractTaskList incoming(int from, int to) throws IllegalStateException {
+        /*
         // Exceptions
         if (from<0){
             //Exception in case the 'from' parameter is negative
@@ -193,40 +201,28 @@ public class LinkedTaskListImpl extends AbstractTaskList{
                 }
             }
         }
+         */
         ////////////////////////////////////////////////////////////////
         // With streams
-/*
         AbstractTaskList theList = new LinkedTaskListImpl();
-        Node listForStream = this.list;
-        while (listForStream != null) {
-            Node finalListForStream = listForStream;
-            // Stream for non-repetitive
-            Stream.of(listForStream)
-                    .filter(task -> finalListForStream.task.isActive()
-                                    && !finalListForStream.task.isRepeated()
-                                    &&  finalListForStream.task.getTime() > from
-                                    && finalListForStream.task.getTime() < to)
-                    .forEach(node -> theList.add(node.task));
-            // Stream for repetitive
-            Stream.of(listForStream)
-                    .filter(task -> finalListForStream.task.isActive()
-                            && finalListForStream.task.isRepeated())
-                    .forEach(node -> {
-                        int i = node.task.getStartTime();
-                        int j = node.task.getEndTime();
-                        int k = node.task.getRepeatInterval();
-                        for (int x = i; x<=j; x=x+k){
-                            if (x>from && x<to){
-                                theList.add(node.task);
-                                break;
-                            }
-                        }
-                    });
-            listForStream = listForStream.nextNode;
+        if (this.size() == 0){
+            throw new IllegalStateException();
+        } else {
+            // Stream for non-repetitive tasks
+            this.getStream()
+                    .filter(index -> index.isRepeated()
+                            && index.isActive()
+                            && index.getTime() > from
+                            && index.getTime() < to)
+                    .forEach(theList::add);
+            // Stream for repetitive tasks
+            this.getStream()
+                    .filter(index -> index.isRepeated()
+                            && index.isActive()
+                            && index.nextTimeAfter(from) < to)
+                    .forEach(theList::add);
         }
-
- */
-        return theList;
+            return theList;
     }
 
     /**
@@ -301,19 +297,32 @@ public class LinkedTaskListImpl extends AbstractTaskList{
     }
 
     /**
+     * This method creates a stream that allows to work with collections, iterating each of them
+     * @return an Steream element
+     */
+    @Override
+    public Stream<Task> getStream() {
+        if (this.size() == 0){
+            throw new IllegalStateException();
+        } else {
+            return StreamSupport.stream(this.spliterator(), false);
+        }
+    }
+
+    /**
      * This method clones a linked list
      * @return the linked list cloned
      */
     /*
     @Override
-    public AbstractTaskList clone() {
+    public LinkedTaskList clone() {
         try {
-            return (AbstractTaskList) super.clone();
+            return (LinkedTaskList) super.clone();
         } catch (CloneNotSupportedException e){
             return null;
         }
     }
-    */
+     */
 
     /**
      * This method shows the info inside the list
