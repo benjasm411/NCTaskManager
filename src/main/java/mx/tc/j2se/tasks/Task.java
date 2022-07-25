@@ -1,32 +1,33 @@
 package mx.tc.j2se.tasks;
 
-public interface Task extends Cloneable{
+import java.time.LocalDateTime;
+
+public interface Task {
     String getTitle();
 
-    void setTitle(String var1);
+    void setTitle(String title);
 
     boolean isActive();
 
-    void setActive(boolean var1);
+    void setActive(boolean active);
 
-    int getTime();
+    LocalDateTime getTime();
 
-    void setTime(int var1);
+    void setTime(LocalDateTime time);
 
-    int getStartTime();
+    LocalDateTime getStartTime();
 
-    int getEndTime();
+    LocalDateTime getEndTime();
 
-    int getRepeatInterval();
+    long getRepeatInterval();
 
-    void setTime(int var1, int var2, int var3);
+    void setTime(LocalDateTime start, LocalDateTime end, long interval);
 
     boolean isRepeated();
 
-    int nextTimeAfter(int var1);
-    boolean equals(Object o);
-    int hashCode();
-    String toString();
+    LocalDateTime nextTimeAfter(LocalDateTime current);
 
-    Task clone() throws CloneNotSupportedException;
+    boolean equals(Object o);
+
+    int hashCode();
 }

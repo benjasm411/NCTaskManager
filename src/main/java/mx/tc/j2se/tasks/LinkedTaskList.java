@@ -1,6 +1,7 @@
 package mx.tc.j2se.tasks;
 
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 public interface LinkedTaskList{
     void add(Task task);
@@ -17,5 +18,6 @@ public interface LinkedTaskList{
     int hashCode();
 
     LinkedTaskList clone();
+    Stream<Task> getStream();
 }
 

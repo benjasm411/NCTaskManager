@@ -9,7 +9,6 @@ public abstract class AbstractTaskList implements Iterable<Task>, Cloneable {
     public abstract boolean remove (Task task);
     public abstract int size();
     public abstract Task getTask(int index);
-    public abstract AbstractTaskList incoming(int from, int to);
     public abstract Iterator<Task> iterator();
 
     public abstract boolean equals (Object o);

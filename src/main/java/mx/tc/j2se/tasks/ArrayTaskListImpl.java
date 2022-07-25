@@ -117,75 +117,6 @@ public class ArrayTaskListImpl extends AbstractTaskList {
     }
 
     /**
-     * Method that indicates the tasks that are between a certain time, also the tasks must be active
-     *
-     * @param from initial time of the tasks selection
-     * @param to   final time of the tasks selection
-     * @return return an array with the tasks that are between that time
-     */
-    public AbstractTaskList incoming(int from, int to) {
-        /*
-        if (from < 0) {
-            //Exception in case the 'from' parameter is negative
-            throw new IllegalAnnotationException("The from parameter needs a positive number");
-        } else if (to < from) {
-            //Exception in case 'to' is greater than 'from'
-            throw new IllegalAnnotationException("The to parameter needs to be greater than the from parameter");
-        }
-
-        int k = 0;
-        boolean exist;
-        String currentTaskName;
-        Task currentTask;
-        int tasksLength = this.arrayTaskList.length;
-        Task uniqueTasks[] = new Task[tasksLength];
-        // Select the tasks that are active and are between the time interval
-        AbstractTaskList newList = new ArrayTaskListImpl(); // New ArrayTaskList instance is created
-        for (Task currentUniqueTask : this.arrayTaskList) {
-            if (currentUniqueTask.isRepeated() && currentUniqueTask.isActive()) {
-                int j = currentUniqueTask.getEndTime();
-                int x = currentUniqueTask.getRepeatInterval();
-                for (int i = currentUniqueTask.getStartTime();
-                     i <= j; i = x + i) {
-                    if (i > from && i < to) {
-                        newList.add(currentUniqueTask);
-                        break;
-                    }
-                }
-            } else {
-                if (currentUniqueTask.isActive()
-                        && currentUniqueTask.getStartTime() > from
-                        && currentUniqueTask.getStartTime() < to) {
-                    newList.add(currentUniqueTask);
-                }
-            }
-        }
-        */
-
-        /////////////////////////////////////////////////////////////////////////////
-        // With streams
-        AbstractTaskList newList = new ArrayTaskListImpl();
-        if (this.size() == 0){
-            throw new IllegalStateException();
-        } else {
-            // Stream for non-repetitive tasks
-            this.getStream()
-                    .filter(task -> task.getStartTime() > from
-                            && task.getStartTime() < to
-                            && !task.isRepeated()
-                            && task.isActive())
-                    .forEach(newList::add);
-            // Stream for repetitive tasks
-            this.getStream()
-                    .filter(task -> task.isRepeated()
-                            && task.isActive()
-                            && task.nextTimeAfter(from) < to)
-                    .forEach(newList::add);
-        }
-        return newList;
-    }
-
-    /**
      * This method allows the program iterate over all the elements in the array or list
      *
      * @return return the iterator object which allows to iterate the list
@@ -253,7 +184,7 @@ public class ArrayTaskListImpl extends AbstractTaskList {
      * This method clones an array
      * @return the array list cloned
      */
-    /*
+/*
     @Override
     public ArrayTaskList clone() {
         try {
@@ -262,7 +193,7 @@ public class ArrayTaskListImpl extends AbstractTaskList {
             return null;
         }
     }
-     */
+*/
 
 
     /**
