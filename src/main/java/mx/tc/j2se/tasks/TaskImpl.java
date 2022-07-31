@@ -1,5 +1,6 @@
 package mx.tc.j2se.tasks;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -7,7 +8,7 @@ import java.time.LocalDateTime;
  *
  * @author Benjamin Sanchez Martinez
  */
-public class TaskImpl implements Task, Cloneable {
+public class TaskImpl implements Task, Cloneable, Serializable {
     private String title;
     private LocalDateTime time;
     private LocalDateTime start;
