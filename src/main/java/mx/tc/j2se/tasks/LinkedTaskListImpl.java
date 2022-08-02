@@ -187,24 +187,20 @@ public class LinkedTaskListImpl extends AbstractTaskList{
      */
     public boolean equals(Object o){
         LinkedTaskList list = (LinkedTaskList) o;
-        boolean state = false;
         int index = 0;
         if (this.size() != (list.size())){
             return false;
         } else {
             Node currentList = this.list;
             while (currentList != null){
-                if (currentList.task.equals(list.getTask(index))){
-                    state = true;
-                } else {
-                    state = false;
-                    break;
+                if (!currentList.task.equals(list.getTask(index))){
+                    return false;
                 }
                 index++;
                 currentList = currentList.nextNode;
             }
         }
-        return state;
+        return true;
     }
 
     /**
